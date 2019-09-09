@@ -14,7 +14,7 @@ function findImports(path) {
 }
 
 export default function (src) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const sources = {};
     sources[src] = {
       urls: [`file://${src}`],
@@ -43,25 +43,29 @@ export default function (src) {
         },
       },
     }), findImports);
-    const res = JSON.parse(output);
-    resolve({
-      contracts: Object.keys(res.contracts).reduce((o, k) => {
-        const file = k.split(':')[0];
-        const fileFragments = file.split('/');
-        const contractName = fileFragments[fileFragments.length - 1].split('.sol')[0];
-        const contract = res.contracts[k][contractName];
-        const fileName = `${process.env.PWD}/${k.split(':')[0]}`;
-        return {
-          ...o,
-          [contractName]: {
-            ...contract,
-            fileName,
-            abi: contract.abi,
-            devdoc: contract.devdoc,
-            userdoc: contract.userdoc,
-          },
-        };
-      }, {}),
-    });
+    try {
+      const res = JSON.parse(output);
+      resolve({
+        contracts: Object.keys(res.contracts).reduce((o, k) => {
+          const file = k.split(':')[0];
+          const fileFragments = file.split('/');
+          const contractName = fileFragments[fileFragments.length - 1].split('.sol')[0];
+          const contract = res.contracts[k][contractName];
+          const fileName = `${process.env.PWD}/${k.split(':')[0]}`;
+          return {
+            ...o,
+            [contractName]: {
+              ...contract,
+              fileName,
+              abi: contract.abi,
+              devdoc: contract.devdoc,
+              userdoc: contract.userdoc,
+            },
+          };
+        }, {}),
+      });
+    } catch (e) {
+      reject(output); // return the bullshit from solc (at least we can know whats going on)
+    }
   });
 }

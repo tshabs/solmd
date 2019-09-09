@@ -33,7 +33,8 @@ export default function (opts) {
     .then(({ contracts }) => (
       compile({ ...opts, contracts })
     ))
-    .catch(() => {
+    .catch((err) => {
+      console.log(err);
       console.error(`solmd: Failed to compile contracts at ${opts._}`); // eslint-disable-line no-console
       process.exit(1);
     });
