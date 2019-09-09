@@ -2,7 +2,5 @@
 node_modules
 sol.md
 test/output.md
-
 .nyc_output/
 coverage/
-lib

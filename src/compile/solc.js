@@ -5,10 +5,10 @@ function findImports(path) {
   let output = '';
   const relPath = path.replace('file://', '');
 
-  if (fs.existsSync(relPath) == true) {
+  if (fs.existsSync(relPath) === true) {
     output = fs.readFileSync(relPath);
   } else {
-    output = fs.readFileSync('node_modules/' + relPath);
+    output = fs.readFileSync(`node_modules/${relPath}`);
   }
   return { contents: output.toString() };
 }
